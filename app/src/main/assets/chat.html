@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf8">
+	<title>android webview</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" >
+	<link href="css/android-ui.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+	<div class="chat_main">
+		<h3 class="chat-title"> 正在与xxx聊天 </h3>
+		<div class="content">
+			<div class="left">
+				<img src="./img/test2.jpg" class="avatar fl" /><span class="msg fl ml-10">你好</span><div class="clean"></div>
+			</div>
+			<div class="right">
+				<img src="./img/test2.jpg" class="avatar fr" /><span class="msg fr mr-10">你好</span><div class="clean"></div>
+			</div>
+		</div>
+		<!-- <input type="text" id="uid" class="mt-20" placeholder="please enter uid"> -->
+		<div class="msg-data">
+			<input type="text" id="msg" class="mt-20" placeholder="please enter msg ...">
+			<button id="sendmsg" class="mt-10">发 送</button>
+		</div>
+		<div class="clean"> </div>
+		<div id="debug"></div>
+	</div>
+	
+	<script src="js/jquery-1.9.0.js" type="text/javascript" ></script>
+	<script src="js/common.js" type="text/javascript" ></script>
+	<script>
+	
+		var size = {'height':window.innerHeight, 'width':window.innerWidth} ;
+		$('.chat_main').css('height', size.height);
+		
+		function updateContent(chatHtml) {
+			$('.content').append(chatHtml);
+		}
+		
+		$('#sendmsg').click(function(){
+			var msg = $('#msg').val();
+			var uid = $('#uid').val();
+			jsbridge.sendMsg(msg+'') ;
+		})
+		
+	</script>
+</body>
+</html>
