@@ -44,7 +44,7 @@ final class WriteData implements Runnable{
 			int toUid = this.toUid;
 			String content = this.content;
 			
-			int len = content.length();
+			int len = content.getBytes().length ; //content.length();
 			
 			int data_len = 4 + 2 + 4 + 4 + 4 + len ;
 			
