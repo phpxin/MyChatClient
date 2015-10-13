@@ -179,7 +179,17 @@ public class ChatActivity extends Activity {
 					htdoc.loadUrl("javascript:updateContent('" + html + "')");
 				}else{
 					//非当前聊天用户，执行其他动作，提示用户或保存数据库
-					Toast.makeText(getApplicationContext(), "其他用户发来消息，uid "+sender, Toast.LENGTH_SHORT).show();
+					//Toast.makeText(getApplicationContext(), "其他用户发来消息，uid "+sender, Toast.LENGTH_SHORT).show();
+
+					DBA dba = new DBA(getApplicationContext()) ;
+					MsgBean _msg = new MsgBean();
+					_msg.uid = Integer.parseInt(sender);
+					_msg.content = _b.getString("content");
+					_msg.fid = Config.my.uid ;
+					_msg.addtime = 0 ;
+					_msg.type = 1 ;
+
+					dba.insertMsg(_msg);
 				}
 
 				break;

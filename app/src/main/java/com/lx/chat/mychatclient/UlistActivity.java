@@ -16,6 +16,7 @@ import android.os.Message;
 import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 public class UlistActivity extends Activity {
 	
@@ -45,8 +46,20 @@ public class UlistActivity extends Activity {
 		htdoc.loadUrl("file:///android_asset/userlist.html");
 		
 		(new Thread(sockHttpConnection)).start();
+
+		Config.rdThread.setDoit(true);
+		Config.rdThread.setHandler(this.myHandler);
 	}
-	
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		//当用户返回该界面时触发
+
+		Config.rdThread.setDoit(true);
+		Config.rdThread.setHandler(this.myHandler);
+	}
+
 	Runnable sockHttpConnection = new Runnable() {
 
 		@Override
@@ -110,7 +123,9 @@ public class UlistActivity extends Activity {
 
 		}
 
-	};	
+	};
+
+
 	
 	// 主线程操作句柄
 	@SuppressLint("HandlerLeak")
@@ -123,6 +138,23 @@ public class UlistActivity extends Activity {
 				String html = _b.getString("content");
 				jb.setJsonData(html);
 				htdoc.loadUrl("javascript:updateContent('" + html + "')");
+				break;
+
+			case HandleMess.MESS_RECVMSG :
+				String sender = _b.getString("uid");
+
+				Log.i("lixin", "save db") ;
+
+				DBA dba = new DBA(getApplicationContext()) ;
+				MsgBean _msg = new MsgBean();
+				_msg.uid = Integer.parseInt(sender);
+				_msg.content = _b.getString("content");
+				_msg.fid = Config.my.uid ;
+				_msg.addtime = 0 ;
+				_msg.type = 1 ;
+
+				dba.insertMsg(_msg);
+
 				break;
 			}
 			super.handleMessage(msg);
