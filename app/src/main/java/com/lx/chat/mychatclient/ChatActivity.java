@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,6 +74,8 @@ public class ChatActivity extends Activity {
 		htdoc.addJavascriptInterface(jb, "jsbridge");
 		
 		htdoc.loadUrl("file:///android_asset/chat.html");
+
+		selectFriendCacheMsg(); //必须在url获取完成后调用
 		
 		(new Thread(sockHttpConnection)).start();
 		
@@ -81,6 +84,32 @@ public class ChatActivity extends Activity {
 		Config.rdThread.setDoit(true);
 		Config.rdThread.setHandler(this.myHandler);
 		
+	}
+
+	/**
+	 * 获取数据库缓存消息,必须在url获取完成后调用
+	 */
+	private void selectFriendCacheMsg()
+	{
+		DBA dba = new DBA(getApplicationContext()) ;
+		ArrayList<MsgBean> mbs = dba.getMsgListByFid(fid) ;
+
+		Log.i("lixin", "ddddddd  sqlite is running") ;
+
+		if (mbs.isEmpty())
+			return ;
+
+		String html = "" ;
+
+		for (MsgBean _mb : mbs)
+		{
+			html += "<div class=\"left\"><img src=\""+favatar+"\" class=\"avatar fl\" /><span class=\"msg fl ml-10\">"+_mb.content+"</span><div class=\"clean\"></div></div>" ;
+
+		}
+
+		Log.i("lixin", html) ;
+
+		htdoc.loadUrl("javascript:updateContent('" + html + "')");
 	}
 	
 	Runnable sockHttpConnection = new Runnable() {
