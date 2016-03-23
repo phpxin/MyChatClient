@@ -26,6 +26,10 @@
             android:name=".ChatActivity"
             android:label="@string/title_activity_chat" >
         </activity>
+        <activity
+            android:name=".UsersActivity"
+            android:label="@string/title_activity_users" >
+        </activity>
     </application>
 
 </manifest>

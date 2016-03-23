@@ -135,7 +135,8 @@ public class MainActivity extends Activity {
 				if(flag == 1){
 	                //使用意图对象切换窗口
 	                Intent showDemoPage=new Intent();
-	                showDemoPage.setClass(getApplicationContext(), UlistActivity.class);
+	                //showDemoPage.setClass(getApplicationContext(), UlistActivity.class);
+                    showDemoPage.setClass(getApplicationContext(), UsersActivity.class);
 	                //切换窗体
 	                startActivity(showDemoPage);
 				}else{
