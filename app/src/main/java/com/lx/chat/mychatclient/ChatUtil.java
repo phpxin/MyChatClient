@@ -16,6 +16,6 @@ public class ChatUtil {
     	}
     	
         return in;
-   }
+   	}
 
 }

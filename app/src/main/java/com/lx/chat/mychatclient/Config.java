@@ -14,6 +14,7 @@ public class Config {
 	public static BufferedOutputStream clientSend = null;
 	public static String ServerAddr = "";
 	public static ReadData rdThread = null;
+
 	
 	static {
 		

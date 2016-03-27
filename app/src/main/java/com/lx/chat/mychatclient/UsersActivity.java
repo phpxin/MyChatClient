@@ -22,38 +22,26 @@ public class UsersActivity extends AppCompatActivity {
 
         List<UserBean> userlist = new ArrayList<UserBean>();
 
-        UserBean _b = new UserBean();
-        _b.setUid(1);
-        _b.setAccount("lalalalal");
-        _b.setAvatar("http://192.168.3.17:8080/uploads/5.jpg?1458620685");
-        _b.setNickname("lixin");
+        for (int i=1; i<=12; i++) {
 
-        userlist.add(_b) ;
+            UserBean _b = new UserBean();
+
+            int _i = (i%6) + 1 ;
+
+            _b.setUid(i);
+            _b.setAccount("lalalalal");
+            _b.setAvatar("http://123.56.255.62:8080/uploads/"+_i+".jpg");
+            _b.setNickname("lixin "+i);
+
+            userlist.add(_b);
+
+        }
 
         UserListAdapter ulAdapter = new UserListAdapter(getApplicationContext(), userlist, R.layout.userlist) ;
 
         ListView lv = (ListView)findViewById(R.id.lv) ;
 
         lv.setAdapter(ulAdapter);
-
-
-        /*
-        HashMap<String,String> ulist = new HashMap<String, String>() ;
-        ulist.put("uname", "lx") ;
-        ulist.put("header", "http://192.168.3.17:8080/uploads/5.jpg?1458620685") ;
-
-        ArrayList<HashMap<String,String>> ulist_l = new ArrayList<HashMap<String,String>>();
-        ulist_l.add(ulist ) ;
-
-        Adapter ad = new SimpleAdapter(getApplicationContext(), ulist_l, R.layout.userlist,
-                new String[]{"uname", "header"}, new int[]{R.id.uname, R.id.header}) ;
-
-        ListView lv = (ListView)findViewById(R.id.lv) ;
-
-        lv.setAdapter((ListAdapter) ad);
-
-        */
-
     }
 
     @Override
