@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lx.chat.mychatclient.AsyncTaskImageLoad;
 import com.lx.chat.mychatclient.R;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class MsgListAdapter extends BaseAdapter {
     private ArrayList<HashMap<String, String>> msgs; //要绑定的数据
     private int resource; //绑定条目的界面
     private LayoutInflater inflater ;//布局填充器
-
+    private String uri ;
     HashMap<Integer, View> IMap = new HashMap<Integer, View>();
 
     //构造方法获取数据和界面
@@ -64,23 +66,35 @@ public class MsgListAdapter extends BaseAdapter {
         String pos = _item.get("position");
 
         //if(convertView==null){
-            //resource 指定使用哪个资源文件(item.xml)生成view对象
-            //设置填充对象
-            if (pos == "right")
-                convertView = inflater.inflate(R.layout.item2, null);//null 代表没有根元素
-            else
-                convertView = inflater.inflate(R.layout.item, null);//null 代表没有根元素
+        //resource 指定使用哪个资源文件(item.xml)生成view对象
+        //设置填充对象
+        if (pos == "right")
+            convertView = inflater.inflate(R.layout.item2, null);//null 代表没有根元素
+        else
+            convertView = inflater.inflate(R.layout.item, null);//null 代表没有根元素
         //}
 
 
         TextView date = (TextView)convertView.findViewById(R.id.send_date);
         TextView right = (TextView)convertView.findViewById(R.id.msgcontent);
+        ImageView userHeaderView = (ImageView) convertView.findViewById(R.id.avatar) ;
 
         date.setText(_item.get("date"));
         right.setText(_item.get("content"));
+
+        //加载图片资源
+        uri = _item.get("avatar");
+        LoadImage(userHeaderView, uri);
 
 
         return convertView;
     }
 
+    private void LoadImage(ImageView img, String path)
+    {
+        //异步加载图片资源
+        AsyncTaskImageLoad async=new AsyncTaskImageLoad(img);
+        //执行异步加载，并把图片的路径传送过去
+        async.execute(path);
+    }
 }

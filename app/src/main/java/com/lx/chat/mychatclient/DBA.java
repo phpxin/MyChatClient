@@ -3,6 +3,7 @@ package com.lx.chat.mychatclient;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,8 @@ public class DBA {
      */
     public ArrayList<MsgBean> getMsgListByFid( int fid ) {
         SQLiteDatabase db = dbo.getReadableDatabase() ;
-        String sql = "select * from msg where fid=" + fid ;
+        String sql = "select * from msg where uid=" + fid ;
+        //Log.i("lixin", sql);
 
         Cursor cs = db.rawQuery(sql, null) ;
         ArrayList<MsgBean> mbs = new ArrayList<MsgBean>() ;
@@ -43,7 +45,7 @@ public class DBA {
 
 
         db = dbo.getWritableDatabase();
-        sql = "delete from msg where fid=" + fid ;
+        sql = "delete from msg where uid=" + fid ;
         db.execSQL(sql);
 
         db.close();

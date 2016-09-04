@@ -68,20 +68,6 @@ public class ChatNewActivity extends AppCompatActivity {
 
         msgs = new ArrayList<HashMap<String, String>>() ;
 
-        HashMap<String, String> msg = new HashMap<String, String>();
-        msg.put("date", "12:00");
-        msg.put("content", "lssss") ;
-        msg.put("position", "left");
-        msgs.add(msg);
-
-
-        msg = new HashMap<String, String>();
-        msg.put("date", "12:40");
-        msg.put("content", "你好啊") ;
-        msg.put("position", "right");
-        msgs.add(msg);
-
-
 
         lv = (ListView) findViewById(R.id.list) ;
         lv.setFooterDividersEnabled(false);
@@ -99,18 +85,7 @@ public class ChatNewActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String _c = content.getEditableText().toString();
-                /*
-                HashMap<String, String> msg = new HashMap<String, String>();
-                msg.put("date", "12:40");
-                msg.put("content", _c) ;
-                msg.put("position", "left");
-                msgs.add(msg);
 
-                pa.notifyDataSetChanged();     //调用适配器的方法，刷新列表
-
-                //lv.scrollTo(0, lv.getMeasuredHeight()-lv.getScrollY());
-                lv.setSelection(ListView.FOCUS_DOWN);
-                */
                 int _toUid = fid;
                 String _content = _c;
 
@@ -120,7 +95,7 @@ public class ChatNewActivity extends AppCompatActivity {
             }
         });
 
-        selectFriendCacheMsg(); //必须在url获取完成后调用
+
 
         (new Thread(sockHttpConnection)).start();
 
@@ -136,32 +111,34 @@ public class ChatNewActivity extends AppCompatActivity {
         DBA dba = new DBA(getApplicationContext()) ;
         ArrayList<MsgBean> mbs = dba.getMsgListByFid(fid) ;
 
-        Log.i("lixin", "ddddddd  sqlite is running") ;
-
         if (mbs.isEmpty())
             return ;
 
-        //String html = "" ;
-
         for (MsgBean _mb : mbs)
         {
-            //html += "<div class=\"left\"><img src=\""+favatar+"\" class=\"avatar fl\" /><span class=\"msg fl ml-10\">"+_mb.content+"</span><div class=\"clean\"></div></div>" ;
-            //String html = "<div class=\"left\"><img src=\""+favatar+"\" class=\"avatar fl\" /><span class=\"msg fl ml-10\">"+_b.getString("content")+"</span><div class=\"clean\"></div></div>" ;
-            //htdoc.loadUrl("javascript:updateContent('" + html + "')");
-            //String _c = content.getEditableText().toString();
+
             HashMap<String, String> chatMsg = new HashMap<String, String>();
             chatMsg.put("date", "12:40");
             chatMsg.put("content", _mb.content) ;
+            chatMsg.put("avatar", favatar);
             chatMsg.put("position", "left");
             msgs.add(chatMsg);
 
         }
 
-        //Log.i("lixin", html) ;
-
-        //htdoc.loadUrl("javascript:updateContent('" + html + "')");
         pa.notifyDataSetChanged();     //调用适配器的方法，刷新列表
         lv.setSelection(ListView.FOCUS_DOWN);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //当用户返回该界面时触发
+
+        selectFriendCacheMsg(); //必须在url获取完成后调用
+
+        Config.rdThread.setDoit(true);
+        Config.rdThread.setHandler(this.myHandler);
     }
 
     Runnable sockHttpConnection = new Runnable() {
@@ -216,7 +193,7 @@ public class ChatNewActivity extends AppCompatActivity {
                     JSONObject data = (JSONObject) jarr.getJSONObject("data").getJSONObject("info");
                     fname = data.getString("name");
                     favatar = data.getString("avatar");
-
+                    selectFriendCacheMsg(); //必须在url获取完成后调用
                 }else{
                     //failed
                     Log.i("lixin", "get user Info failed: parse json failed");
@@ -253,34 +230,30 @@ public class ChatNewActivity extends AppCompatActivity {
                     String sender = _b.getString("uid");
 
                     if(sender.equals(Config.my.getUid()+"")){
-                        //String html = "<div class=\"right\"><img src=\""+Config.my.getAvatar()+"\" class=\"avatar fr\" /><span class=\"msg fr mr-10\">"+_b.getString("content")+"</span><div class=\"clean\"></div></div>" ;
-                        //htdoc.loadUrl("javascript:updateContent('" + html + "')");
-                        //String _c = content.getEditableText().toString();
+
                         HashMap<String, String> chatMsg = new HashMap<String, String>();
                         chatMsg.put("date", "12:40");
                         chatMsg.put("content", _b.getString("content")) ;
                         chatMsg.put("position", "right");
+                        chatMsg.put("avatar", Config.my.avatar);
                         msgs.add(chatMsg);
 
                         pa.notifyDataSetChanged();     //调用适配器的方法，刷新列表
 
-                        //lv.scrollTo(0, lv.getMeasuredHeight()-lv.getScrollY());
                         lv.setSelection(ListView.FOCUS_DOWN);
                     }else if(sender.equals(fid+"")){
-                        //String html = "<div class=\"left\"><img src=\""+favatar+"\" class=\"avatar fl\" /><span class=\"msg fl ml-10\">"+_b.getString("content")+"</span><div class=\"clean\"></div></div>" ;
-                        //htdoc.loadUrl("javascript:updateContent('" + html + "')");
-                        //String _c = content.getEditableText().toString();
+
                         HashMap<String, String> chatMsg = new HashMap<String, String>();
                         chatMsg.put("date", "12:40");
                         chatMsg.put("content", _b.getString("content")) ;
                         chatMsg.put("position", "left");
+                        chatMsg.put("avatar", favatar);
                         msgs.add(chatMsg);
 
                         pa.notifyDataSetChanged();     //调用适配器的方法，刷新列表
                         lv.setSelection(ListView.FOCUS_DOWN);
                     }else{
                         //非当前聊天用户，执行其他动作，提示用户或保存数据库
-                        //Toast.makeText(getApplicationContext(), "其他用户发来消息，uid "+sender, Toast.LENGTH_SHORT).show();
 
                         DBA dba = new DBA(getApplicationContext()) ;
                         MsgBean _msg = new MsgBean();

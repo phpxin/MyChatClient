@@ -43,28 +43,7 @@ public class UsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
-
-
         userlist = new ArrayList<UserBean>();
-
-        /*
-
-        for (int i=1; i<=6; i++) {
-
-            UserBean _b = new UserBean();
-
-            int _i = (i%6) + 1 ;
-
-            _b.setUid(i);
-            _b.setAccount("lalalalal");
-            _b.setAvatar("http://192.168.0.106:8080/uploads/"+_i+".jpg");
-            _b.setNickname("lixin "+i);
-
-            userlist.add(_b);
-
-        }
-
-        */
 
         ulAdapter = new UserListAdapter(getApplicationContext(), userlist, R.layout.userlist) ;
 
@@ -74,6 +53,15 @@ public class UsersActivity extends AppCompatActivity {
 
 
         (new Thread(sockHttpConnection)).start();
+
+        Config.rdThread.setDoit(true);
+        Config.rdThread.setHandler(this.myHandler);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //当用户返回该界面时触发
 
         Config.rdThread.setDoit(true);
         Config.rdThread.setHandler(this.myHandler);
@@ -226,6 +214,8 @@ public class UsersActivity extends AppCompatActivity {
 
                 case HandleMess.MESS_RECVMSG :
                     String sender = _b.getString("uid");
+
+                    Log.i("lixin", "save db") ;
 
                     DBA dba = new DBA(getApplicationContext()) ;
                     MsgBean _msg = new MsgBean();
