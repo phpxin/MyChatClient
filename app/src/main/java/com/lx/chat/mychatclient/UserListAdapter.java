@@ -1,6 +1,8 @@
 package com.lx.chat.mychatclient;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.lx.chat.listeners.UserListClickListener;
+
 import java.util.List;
 
 
@@ -21,11 +26,13 @@ public class UserListAdapter extends BaseAdapter {
     private int res;
     private LayoutInflater inflater ;//布局填充器
     private String uri ;
+    private Context context;
 
-    public UserListAdapter(Context context, List<UserBean> _userlist, int _res)
+    public UserListAdapter(Context _context, List<UserBean> _userlist, int _res)
     {
         this.userlist = _userlist ;
         this.res = _res ;
+        this.context = _context;
         //向系统申请布局填充器
         inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -68,6 +75,8 @@ public class UserListAdapter extends BaseAdapter {
         //加载图片资源
         uri = user.getAvatar();
         LoadImage(userHeaderView, uri);
+
+        convertView.setOnClickListener(new UserListClickListener(context, user.getUid()));
 
         return convertView;
     }
