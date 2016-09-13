@@ -58,6 +58,12 @@ public class MsgListAdapter extends BaseAdapter {
         return position;
     }
 
+    class ViewHolder{
+        TextView date ;
+        TextView right ;
+        ImageView userHeaderView ;
+    }
+
     //最重要的接口 获取listView界面
     public View getView(final int position, View convertView, ViewGroup parent) {
 
@@ -65,27 +71,35 @@ public class MsgListAdapter extends BaseAdapter {
         Map<String, String> _item = this.msgs.get(position);
         String pos = _item.get("position");
 
-        //if(convertView==null){
-        //resource 指定使用哪个资源文件(item.xml)生成view对象
-        //设置填充对象
-        if (pos == "right")
-            convertView = inflater.inflate(R.layout.item2, null);//null 代表没有根元素
-        else
-            convertView = inflater.inflate(R.layout.item, null);//null 代表没有根元素
-        //}
+        ViewHolder holder = new ViewHolder();
+
+        if(convertView==null){
+
+            //resource 指定使用哪个资源文件(item.xml)生成view对象
+            //设置填充对象
+            if (pos == "right")
+                convertView = inflater.inflate(R.layout.item2, null);//null 代表没有根元素
+            else
+                convertView = inflater.inflate(R.layout.item, null);//null 代表没有根元素
 
 
-        TextView date = (TextView)convertView.findViewById(R.id.send_date);
-        TextView right = (TextView)convertView.findViewById(R.id.msgcontent);
-        ImageView userHeaderView = (ImageView) convertView.findViewById(R.id.avatar) ;
+            holder.date = (TextView)convertView.findViewById(R.id.send_date);
+            holder.right = (TextView)convertView.findViewById(R.id.msgcontent);
+            holder.userHeaderView = (ImageView) convertView.findViewById(R.id.avatar) ;
 
-        date.setText(_item.get("date"));
-        right.setText(_item.get("content"));
+            convertView.setTag(holder);
+
+        }else{
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+
+        holder.date.setText(_item.get("date"));
+        holder.right.setText(_item.get("content"));
 
         //加载图片资源
         uri = _item.get("avatar");
-        LoadImage(userHeaderView, uri);
-
+        LoadImage(holder.userHeaderView, uri);
 
         return convertView;
     }

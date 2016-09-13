@@ -3,6 +3,7 @@ package com.lx.chat.mychatclient;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,8 @@ public class UserListAdapter extends BaseAdapter {
     private LayoutInflater inflater ;//布局填充器
     private String uri ;
     private Context context;
+
+
 
     public UserListAdapter(Context _context, List<UserBean> _userlist, int _res)
     {

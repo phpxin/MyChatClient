@@ -7,11 +7,18 @@
     android:orientation="vertical"
     tools:context="com.lx.chat.mychatclient.UsersActivity">
 
-    <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/lv"
-        />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/userListRf">
+        <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/lv"
+            />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
 
 
 </LinearLayout>

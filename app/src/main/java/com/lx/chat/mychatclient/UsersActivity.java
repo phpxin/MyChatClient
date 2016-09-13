@@ -3,6 +3,7 @@ package com.lx.chat.mychatclient;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +21,11 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -38,6 +42,8 @@ public class UsersActivity extends AppCompatActivity {
     ListView lv;
     UserListAdapter ulAdapter;
 
+    private SwipeRefreshLayout listRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +53,21 @@ public class UsersActivity extends AppCompatActivity {
 
         ulAdapter = new UserListAdapter(getApplicationContext(), userlist, R.layout.userlist) ;
 
+
+
         lv = (ListView)findViewById(R.id.lv) ;
 
         lv.setAdapter(ulAdapter);
+
+
+        listRefresh = (SwipeRefreshLayout)findViewById(R.id.userListRf);
+
+        listRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                (new Thread(sockHttpConnection)).start();
+            }
+        });
 
 
         (new Thread(sockHttpConnection)).start();
@@ -97,6 +115,8 @@ public class UsersActivity extends AppCompatActivity {
 
             URL url = null;
 
+            int uid = Config.my.getUid() ;
+
             try {
                 // 创建url对象
                 url = new URL(userListApi);
@@ -106,20 +126,31 @@ public class UsersActivity extends AppCompatActivity {
 
             }
 
+            OutputStream ots = null;
+            BufferedReader ins = null;
+
             // 通过http将用户信息提交
-            HttpURLConnection hUrlConn;
+            HttpURLConnection hUrlConn = null;
             try {
                 // 通过url对象获取并初始化http连接对象
                 hUrlConn = (HttpURLConnection) url.openConnection();
 
                 // 设置开启post方法
-                hUrlConn.setRequestMethod("GET");
+                hUrlConn.setRequestMethod("POST");
 
                 // 打开http连接
                 hUrlConn.connect();
 
+                //req = new BufferedWriter(new OutputStreamWriter(hUrlConn.getOutputStream())) ;
+                //req.write("uid="+uid);
+                //发送post请求，post以键值对夹&符保存在正文中发送
+                ots=hUrlConn.getOutputStream();
+                String queryString = "uid="+uid;
+                ots.write(queryString.getBytes());
+
+
                 // 接收返回值
-                BufferedReader ins = new BufferedReader(new InputStreamReader(
+                ins = new BufferedReader(new InputStreamReader(
                         hUrlConn.getInputStream()));
 
                 String content = "";
@@ -146,6 +177,17 @@ public class UsersActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
 
+            }finally {
+                try {
+                    if (ins != null) {
+                        ins.close();
+                    }
+                    if (ots != null) {
+                        ots.close();
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -201,11 +243,14 @@ public class UsersActivity extends AppCompatActivity {
 
                             ulAdapter.notifyDataSetChanged();
 
+
                         }
 
                     }catch (JSONException e){
 
                         Log.i("lixin", e.getMessage()) ;
+                    }finally {
+                        listRefresh.setRefreshing(false); // 停止刷新
                     }
 
 
